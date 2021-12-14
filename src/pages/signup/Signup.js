@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSignup } from "../../hooks/useSignup";
 
 //STYLES
 import styles from "./Signup.module.css";
@@ -6,10 +7,11 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const { signup, isPending, error } = useSignup();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(email, password , displayName);
+    signup(email, password, displayName);
   };
 
   return (
@@ -39,7 +41,16 @@ export default function Signup() {
           value={displayName} //CHANGING THE INPUT TEXT TO THE UPDATED STATE VALUE
         />
       </label>
-      <button className="btn">Signup</button>
+      
+      {/* WHEN THE ISPENDING IS TRUE THEN WE SHOW A LOADING & DISABLED BUTTON*/}
+      {/* AND WHEN ISPENDING IS FALSE THEN WE JUST SHOW THE SIGNUP BUTTON TO SUBMIT THE FORM VALUES */}
+      {!isPending && <button className="btn">Signup</button>}
+      {isPending && (
+        <button className="btn" disabled>
+          Loading
+        </button>
+      )}
+      {error && <p>{error}</p>}
     </form>
   );
 }

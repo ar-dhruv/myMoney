@@ -2,6 +2,7 @@ import { useState } from "react";
 import { projectAuth } from "../firbase/config";
 
 export const useSignup = () => {
+  //STATES FOR ERROR AND PENDING
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -17,24 +18,25 @@ export const useSignup = () => {
       );
       console.log(res.user);
 
+      //THIS ERROR IS THROWN BY US IN CASES WE DONT GET BACK THE RES BACK eg. BAD NETWORK
       if (!res) {
         throw new Error("Could not complete signup");
       }
 
       //ADD DISPLAY NAME TO THE USER IN FIREBASE
-      await res.user.updateProfile({displayName:displayName})
+      await res.user.updateProfile({ displayName: displayName });
 
       setIsPending(false);
       setError(null);
-
     } catch (err) {
       //IF THERE IS ERROR SIGNING UP THE USER UPDATE THE SETERROR AND SET
       //ISPENDING STATE TO BE FALSE
+      //THIS ERROR WILL BE THROWN BY FIRESTORE...eg. PASSWORD TOO SHORT/EMAIL ALREADY TAKEN
       console.log(err.message);
       setError(err.message);
       setIsPending(false);
     }
   };
 
-  export { error, isPending, signup };
+  return { error, isPending, signup };
 };
