@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { projectAuth } from "../firbase/config";
 import { useAuthContext } from "./useAuthContext";
 
 export const useLogout = () => {
+  const [isCancelled, setIsCancelled] = useState(false); //STATES FOR CLEAN-UP FUNCTION
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(null);
   const { dispatch } = useAuthContext();
@@ -17,15 +18,26 @@ export const useLogout = () => {
 
       //DISPATCHING THE LOGOUT ACTION & WE DONT NEED ANY PAYLOAD FOR LOGGING OUT JUST THE ACTION TYPE
       dispatch({ type: "LOGOUT" });
-      setIsPending(false);
-      setError(null);
+
+      //UPDATE STATE
+      if (!isCancelled) {
+        setIsPending(false);
+        setError(null);
+      }
       //AFTER DISPATCHING THE LOGOUT ACTION WE SET ISPENDING TO BE FALSE AND ERROR TO BE NULL
     } catch (err) {
-      console.log(err.message);
-      setError(err.message);
-      setIsPending(false);
+      if (!isCancelled) {
+        console.log(err.message);
+        setError(err.message);
+        setIsPending(false);
+      }
     }
   };
+
+  //CLEAN-UP FUNCTION
+  useEffect(() => {
+    return () => setIsCancelled(true);
+  }, []);
 
   return { logout, error, isPending };
 };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { projectAuth } from "../firbase/config";
 import { useAuthContext } from "./useAuthContext";
 
@@ -7,6 +7,7 @@ export const useSignup = () => {
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const { dispatch } = useAuthContext();
+  const [isCancelled, setIsCancelled] = useState(false); //STATES FOR CLEAN-UP FUNCTION
 
   const signup = async (email, password, displayName) => {
     setError(null); //WE RESET THE ERROR TO BE NULL EVERYTIME WE TRY TO SIGNUP
@@ -30,17 +31,26 @@ export const useSignup = () => {
       //DISPATCHING THE LOGIN ACTION WITH PAYLOAD AS THE RES.USER RETURNED BY THE FIRESTORE
       dispatch({ type: "LOGIN", payload: res.user });
 
-      setIsPending(false);
-      setError(null);
+      if (!isCancelled) {
+        setIsPending(false);
+        setError(null);
+      }
     } catch (err) {
       //IF THERE IS ERROR SIGNING UP THE USER UPDATE THE SETERROR AND SET
       //ISPENDING STATE TO BE FALSE
       //THIS ERROR WILL BE THROWN BY FIRESTORE...eg. PASSWORD TOO SHORT/EMAIL ALREADY TAKEN
-      console.log(err.message);
-      setError(err.message);
-      setIsPending(false);
+      if (!isCancelled) {
+        console.log(err.message);
+        setError(err.message);
+        setIsPending(false);
+      }
     }
   };
+
+  //CLEAN-UP FUNCTION
+  useEffect(() => {
+    return () => setIsCancelled(true);
+  }, []);
 
   return { error, isPending, signup };
 };
