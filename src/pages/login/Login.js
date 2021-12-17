@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useLogin } from "../../hooks/useLogin";
 
 //STYLES
 import styles from "./Login.module.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login, error, isPending } = useLogin(); //DESTRUCTURING FROM LOGIN HOOK
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(email, password);
+    login(email, password);
   };
 
   return (
@@ -30,7 +32,13 @@ export default function Login() {
           value={password} //CHANGING THE INPUT TEXT TO THE UPDATED STATE VALUE
         />
       </label>
-      <button className="btn">Login</button>
+      {!isPending && <button className="btn">Login</button>}
+      {isPending && (
+        <button className="btn" disabled>
+          Loading
+        </button>
+      )}
+      {error && <p>{error}</p>}
     </form>
   );
 }
