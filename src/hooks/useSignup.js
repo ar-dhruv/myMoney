@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { projectAuth } from "../firbase/config";
+import { useAuthContext } from "./useAuthContext";
 
 export const useSignup = () => {
   //STATES FOR ERROR AND PENDING
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
+  const { dispatch } = useAuthContext();
 
   const signup = async (email, password, displayName) => {
     setError(null); //WE RESET THE ERROR TO BE NULL EVERYTIME WE TRY TO SIGNUP
@@ -16,7 +18,6 @@ export const useSignup = () => {
         email,
         password
       );
-      console.log(res.user);
 
       //THIS ERROR IS THROWN BY US IN CASES WE DONT GET BACK THE RES BACK eg. BAD NETWORK
       if (!res) {
@@ -25,6 +26,9 @@ export const useSignup = () => {
 
       //ADD DISPLAY NAME TO THE USER IN FIREBASE
       await res.user.updateProfile({ displayName: displayName });
+
+      //DISPATCHING THE LOGIN ACTION WITH PAYLOAD AS THE RES.USER RETURNED BY THE FIRESTORE
+      dispatch({ type: "LOGIN", payload: res.user });
 
       setIsPending(false);
       setError(null);
