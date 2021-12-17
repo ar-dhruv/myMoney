@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
 
 //PAGES & COMPONENTS
@@ -8,7 +8,7 @@ import Login from "./pages/login/Login";
 import Navbar from "./Components/Navbar";
 
 function App() {
-  const { authIsReady } = useAuthContext();
+  const { authIsReady, user } = useAuthContext();
 
   return (
     <div className="App">
@@ -17,13 +17,18 @@ function App() {
           <Navbar />
           <Switch>
             <Route exact path="/">
-              <Home />
+              {/* IF USER IS NOT LOGGED IN AND IT CLICKS THE HOME ROUTE THEN IT IS REDIRECTED TO THE LOGIN PAGE ELSE TO THE HOME PAGE */}
+              {!user && <Redirect to="/login" />}
+              {user && <Home />}
             </Route>
             <Route path="/login">
-              <Login />
-            </Route>
+              {/* IF USER IS ALREADY LOGGED IN AND IT CLICKS THE LOGIN ROUTE THEN IT IS REDIRECTED TO THE HOME PAGE ELSE TO THE LOGIN PAGE */}
+              {user && <Redirect to="/" />}
+              {!user && <Login />}
+             </Route>
             <Route path="/signup">
-              <Signup />
+              {user && <Redirect to="/" />}
+              {!user && <Signup />}
             </Route>
           </Switch>
         </BrowserRouter>
