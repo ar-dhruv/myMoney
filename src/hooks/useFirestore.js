@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useState } from "react";
-import { projectFirestore } from "../firbase/config";
+import { projectFirestore, timestamp } from "../firbase/config";
 
 let initialState = {
   document: null,
@@ -59,7 +59,8 @@ export const useFirestore = (collection) => {
 
     //TRING TO ADD A NEW DOCUMENT
     try {
-      const addedDocument = await ref.add(doc);
+      const createdAt = timestamp.fromDate(new Date()); //ADDING THE CURRENT DATE & TIME AS PARAMETER TO THE THE TIMESTAMP IN THE VARIABLE CREATEDAT
+      const addedDocument = await ref.add({ ...doc, createdAt }); //ADDING THE CURRENT DOC BY SPREADING ITS PROPERTIES AND A TIMESTAMP AT WHICH ITS WAS CREATED
       dispatchIFNotCancelled({
         type: "ADDED_DOCUMENT",
         payload: addedDocument,
