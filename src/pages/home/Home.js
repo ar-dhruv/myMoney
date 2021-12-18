@@ -1,12 +1,13 @@
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useCollection } from "../../hooks/useCollection";
-import TransactionList from "./TransactionList";
 
 //STYLES
 import styles from "./Home.module.css";
 
 //COMPONENTS
 import TransactionForm from "./TransactionForm";
+import TransactionList from "./TransactionList";
+
 export default function Home() {
   const { user } = useAuthContext();
   const { documents, error } = useCollection("transactions");
