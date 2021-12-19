@@ -1,12 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { projectFirestore } from "../firbase/config";
 
-export const useCollection = (collection) => {
+export const useCollection = (collection, _query) => {
   const [documents, setDocuments] = useState(null);
   const [error, setError] = useState(null);
 
+  //IF WE DON'T USE A REF THEN INFINITE LOOP IN USEEFFECT AS QUERY IS AN ARRAY & IS DIFFERENT ON EVERY FUNCTION CALL BECAUSE ITS REFERENCE IS CHANGED IN THE MEMORY EVERYTIME SO USEEFECT SEES IT AS A DIFFERENT ARRAY EVERYTIME SO WE USE A USEREF HOOK
+  const query = useRef(_query).current;
+
   useEffect(() => {
     let ref = projectFirestore.collection(collection); //THIS USEEFFECT WILL FIRE AS SOON AS THE COMPONENT USING THIS USECOLLECTION HOOK MOUNTS & HENCE FETCHING THE COLLECTION DATA FROM THE FIRESTORE
+
+    if (query) {
+      ref = ref.where(...query); //FOR ONLY FETCHING DATA OF THE USER HAVING USER.ID == UID....PASSED AS A PROP FROM THE HOME PAGE COMPONENT
+    }
 
     const unsubscribe = ref.onSnapshot(
       (snapshot) => {
@@ -33,7 +40,7 @@ export const useCollection = (collection) => {
 
     //UNSUBSCRIBE ON UNMOUNTING THE COMPONENT WHICH IS USING THIS HOOK
     return () => unsubscribe();
-  }, [collection]);
+  }, [collection, query]);
 
   return { documents, error };
 };
