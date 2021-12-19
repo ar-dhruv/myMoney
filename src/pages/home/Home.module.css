@@ -65,7 +65,7 @@
   align-items: center;
   position: relative;
   overflow: hidden;
-  border-left: 4px solid #1f9751;
+  border-left: 8px solid #1f9751;
 }
 .transactions .name {
   color: #777;
