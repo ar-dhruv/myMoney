@@ -48,4 +48,5 @@ export const useCollection = (collection, _query , _orderBy) => {
   }, [collection, query , orderBy]);
 
   return { documents, error };
+  
 };
