@@ -28,7 +28,7 @@ export default function Navbar() {
         {/* IF WE USER IF ALREADY IN THE STATE THEN WE WILL ONLY SHOW THE LOGOUT BITTON */}
         {user && (
           <>
-            <li>hello, {user.displayName}</li>
+            <li style={{fontSize: "1.2em"}}> &#128522; hello, {user.displayName}</li>
             <li>
               <button className="btn" onClick={logout}>
                 Logout
